@@ -5,7 +5,7 @@ A personalized, interactive digital diary that users can create and share with t
 ## Features
 - **3D Book Interface**: Realistic page flips, spiral binding, and leather textures.
 - **Customization**: Users can write their own story and add photos.
-- **Payment Integration**: Razorpay (Test Mode) to unlock sharing.
+- **Sharing System**: Unlock the diary to share it with your Valentine.
 - **Responsive Design**: Works on Desktop, Tablets, and Mobile.
 
 ## Prerequisites
@@ -20,7 +20,7 @@ A personalized, interactive digital diary that users can create and share with t
     ```
 3.  **Configure Environment**:
     - Rename `.env_example` to `.env`.
-    - Add your **Razorpay Test Keys** in `.env`.
+    - Add your database configuration if needed.
     - (Optional) Update `MONGO_URI` if your MongoDB is not on localhost.
 
 ## Running the Project
@@ -35,5 +35,5 @@ A personalized, interactive digital diary that users can create and share with t
 ## How to Uses
 1.  **Signup**: Create an account with a unique link name (e.g., `rahul-loves-priya`).
 2.  **Edit**: Use the Dashboard to customize the text and images of your diary pages.
-3.  **Unlock**: Click "Pay ₹9" (Test Mode) to unlock the diary for public viewing.
+3.  **Unlock**: Click "Unlock & Share" to make the diary public.
 4.  **Share**: Send the link `http://localhost:3000/u/rahul-loves-priya` to your Valentine!
