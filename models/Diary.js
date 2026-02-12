@@ -23,6 +23,23 @@ const DiarySchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    // Final Page Customizations
+    finalQuestion: {
+        type: String,
+        default: "Will you be my Valentine?"
+    },
+    yesLabel: {
+        type: String,
+        default: "Yes! ❤️"
+    },
+    noLabel: {
+        type: String,
+        default: "No"
+    },
+    successMessage: {
+        type: String,
+        default: "Yay! ❤️ I love you!"
+    },
     // We'll store content for each customizable page
     pages: [
         {

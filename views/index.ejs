@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romantic Diary | Turn Your Memories Into a 3D Story</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Indie+Flower&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        :root {
+            --primary: #6a1b21;
+            --primary-light: #8d4040;
+            --accent: #e6c278;
+            --bg-light: #fdfbf7;
+            --text-dark: #3e2723;
+            --glass: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Navbar --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(253, 251, 247, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(106, 27, 33, 0.2);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10%;
+            background: linear-gradient(135deg, #fff5f5 0%, #fef8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .hero-image {
+            width: 50%;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            max-width: 120%;
+            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.15));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .bg-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* --- Stats/Features --- */
+        .features {
+            padding: 100px 10%;
+            text-align: center;
+            background: white;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--primary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            padding: 40px;
+            border-radius: 20px;
+            background: var(--bg-light);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* --- How It Works --- */
+        .how-it-works {
+            padding: 100px 10%;
+            background: var(--primary);
+            color: white;
+        }
+
+        .how-it-works .section-title {
+            color: var(--accent);
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 20px;
+            font-size: 1.2rem;
+        }
+
+        /* --- Auth Section --- */
+        .auth-section {
+            padding: 100px 10%;
+            background-image: url('/images/diary_wallpaper.png');
+            /* Fallback or repeated asset if preferred */
+            background-size: cover;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 50px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: inherit;
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .auth-card button:hover {
+            background: #f1c40f;
+        }
+
+        .auth-toggle {
+            color: #fff;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .auth-toggle a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 50px;
+            text-align: center;
+            background: var(--text-dark);
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 100px;
+                height: auto;
+                padding-bottom: 50px;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero-image {
+                width: 100%;
+                margin-top: 50px;
+            }
+
+            .steps-container {
+                flex-direction: column;
+            }
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/" class="logo">Romantic Diary</a>
+        <ul class="nav-links">
+            <li><a href="#how-it-works">How it Works</a></li>
+            <li><a href="#auth" class="btn-cta">Start Your Story</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-right">
+            <h1>Create Your Eternal <span style="font-style: italic;">Love Story.</span></h1>
+            <p>Turn your favorite memories and photos into a beautiful 3D interactive diary. The perfect surprise for
+                your Valentine.</p>
+            <a href="#auth" class="btn-cta" style="padding: 15px 40px; font-size: 1.1rem;">Get Started Free</a>
+        </div>
+        <div class="hero-image" data-aos="fade-left">
+            <img src="/images/diary_wallpaper.png" alt="3D Heart Diary Mockup"
+                style="max-width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        </div>
+        <canvas class="bg-particles" id="canvas"></canvas>
+    </section>
+
+    <section class="features" id="features">
+        <h2 class="section-title" data-aos="fade-up">Why Romantic Diary?</h2>
+        <div class="feature-grid">
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+                <span class="feature-icon">📖</span>
+                <h3>3D Realistic Experience</h3>
+                <p>A magic book with smooth page flips, spiral binding, and a premium leather texture.</p>
+            </div>
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+                <span class="feature-icon">📸</span>
+                <h3>Photo Memories</h3>
+                <p>Upload your special couple photos and they'll appear in vintage Polaroid style.</p>
+            </div>
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+                <span class="feature-icon">💸</span>
+                <h3>Affordable Surprise</h3>
+                <p>Unlock an interactive permanent sharing link for your partner for less than a cup of coffee.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title" data-aos="fade-up">How to Surprise Your Partner</h2>
+        <div class="steps-container">
+            <div class="step" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-num">1</div>
+                <h3>Write Your Story</h3>
+                <p>Create pages filled with your best memories and milestones.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-num">2</div>
+                <h3>Add Your Photos</h3>
+                <p>Upload the pictures that make you smile the most.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-num">3</div>
+                <h3>Seal & Share</h3>
+                <p>Pay a tiny fee to get a unique link to send to your Valentine.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="auth-section" id="auth">
+        <div class="auth-card" data-aos="zoom-in">
+            <div id="login-container">
+                <h2>Welcome Back</h2>
+                <form action="/login" method="POST">
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <button type="submit">Login to My Dashboard</button>
+                </form>
+                <div class="auth-toggle">
+                    Don't have an account? <a href="javascript:void(0)" onclick="toggleForm('signup')">Create One</a>
+                </div>
+            </div>
+
+            <div id="signup-container" style="display: none;">
+                <h2>Start Your Story</h2>
+                <form action="/signup" method="POST">
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                    <input type="text" name="slug" placeholder="Link Name (e.g. rahul-loves-priya)" required>
+                    <button type="submit">Create Diary</button>
+                </form>
+                <div class="auth-toggle">
+                    Already have an account? <a href="javascript:void(0)" onclick="toggleForm('login')">Login</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Romantic Diary. Made with ❤️ for lovers everywhere.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        function toggleForm(type) {
+            const login = document.getElementById('login-container');
+            const signup = document.getElementById('signup-container');
+            if (type === 'signup') {
+                login.style.display = 'none';
+                signup.style.display = 'block';
+            } else {
+                login.style.display = 'block';
+                signup.style.display = 'none';
+            }
+        }
+
+        // --- Sparkle/Particle Background ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.alpha = Math.random();
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(106, 27, 33, ${this.alpha * 0.2})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>

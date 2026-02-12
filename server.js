@@ -31,7 +31,7 @@ app.use(session({
 }));
 
 const requireAuth = (req, res, next) => {
-    if (!req.session.userId) return res.redirect('/login');
+    if (!req.session.userId) return res.redirect('/');
     next();
 };
 
@@ -82,9 +82,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // --- Auth Routes ---
 
-app.get('/login', (req, res) => {
-    res.render('login');
-});
+
 
 app.post('/signup', async (req, res) => {
     const { email, password, confirmPassword, slug } = req.body;
@@ -142,7 +140,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    res.redirect('/login');
+    res.redirect('/');
 });
 
 // --- Dashboard Routes ---
@@ -197,6 +195,12 @@ app.post('/dashboard/save', requireAuth, async (req, res) => {
         // Update Title & Description if provided
         if (req.body.title) diary.title = req.body.title;
         if (req.body.description) diary.description = req.body.description;
+
+        // Update Final Page Customizations
+        if (req.body.finalQuestion) diary.finalQuestion = req.body.finalQuestion;
+        if (req.body.yesLabel) diary.yesLabel = req.body.yesLabel;
+        if (req.body.noLabel) diary.noLabel = req.body.noLabel;
+        if (req.body.successMessage) diary.successMessage = req.body.successMessage;
 
         await diary.save();
         res.redirect('/dashboard');
@@ -289,7 +293,8 @@ app.post('/verify-payment', requireAuth, async (req, res) => {
 
 // --- Root Route ---
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    if (req.session.userId) return res.redirect('/dashboard');
+    res.render('index');
 });
 
 

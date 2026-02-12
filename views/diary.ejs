@@ -150,10 +150,16 @@
                                 <div class="front">
                                     <div class="content final-page">
                                         <h2>So, I have a question...</h2>
-                                        <p>Will you be my Valentine?</p>
+                                        <p>
+                                            <%= diary.finalQuestion || 'Will you be my Valentine?' %>
+                                        </p>
                                         <div class="buttons">
-                                            <button id="yes-btn">Yes! ❤️</button>
-                                            <button id="no-btn">No</button>
+                                            <button id="yes-btn">
+                                                <%= diary.yesLabel || 'Yes! ❤️' %>
+                                            </button>
+                                            <button id="no-btn">
+                                                <%= diary.noLabel || 'No' %>
+                                            </button>
                                         </div>
                                         <div id="response-msg"></div>
                                     </div>
@@ -169,7 +175,23 @@
             <!-- Celebration Overlay -->
             <div id="celebration" class="hidden">
                 <div class="confetti"></div>
-                <h1>Yay! ❤️ I love you!</h1>
+
+                <div class="envelope-wrapper">
+                    <div class="envelope">
+                        <div class="envelope-back"></div>
+                        <div class="invitation-card">
+                            <div class="card-border">
+                                <div class="card-content">
+                                    <p class="success-text">
+                                        <%= diary.successMessage || 'Yay! ❤️ I love you!' %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="envelope-front"></div>
+                        <div class="envelope-top"></div>
+                    </div>
+                </div>
             </div>
 
             <script src="/js/script.js"></script>
@@ -186,24 +208,45 @@
                 }
 
                 // Auto-scale text to fit container
-                function fitTextToContainer() {
+                function fitContentToContainer() {
                     document.querySelectorAll('.content').forEach(content => {
                         const p = content.querySelector('p');
-                        if (!p) return;
+                        const imgContainer = content.querySelector('.photo-placeholder');
+                        const img = imgContainer ? imgContainer.querySelector('img') : null;
 
-                        // Reset to default to re-measure
+                        // Reset styles to default to measure true overflow
                         let fontSize = 1.2;
                         p.style.fontSize = fontSize + 'rem';
 
-                        // Reduce if overflowing
-                        while (content.scrollHeight > content.clientHeight && fontSize > 0.7) {
+                        let imgScale = 100; // Percentage max-height
+                        if (imgContainer) {
+                            imgContainer.style.maxHeight = '50%'; // Reset to substantial height
+                            imgContainer.style.width = '80%';
+                        }
+
+                        // Helper to check overflow
+                        const isOverflowing = () => content.scrollHeight > content.clientHeight;
+
+                        // Strategy 1: Reduce Image Size first (if image exists)
+                        if (imgContainer && isOverflowing()) {
+                            // Shrink image down to 20% max-height
+                            let currentMaxHeight = 50;
+                            while (isOverflowing() && currentMaxHeight > 20) {
+                                currentMaxHeight -= 2;
+                                imgContainer.style.maxHeight = currentMaxHeight + '%';
+                            }
+                        }
+
+                        // Strategy 2: Reduce Font Size (if still overflowing)
+                        while (isOverflowing() && fontSize > 0.7) {
                             fontSize -= 0.05;
                             p.style.fontSize = fontSize + 'rem';
                         }
                     });
                 }
-                window.addEventListener('load', fitTextToContainer);
-                window.addEventListener('resize', fitTextToContainer);
+
+                window.addEventListener('load', fitContentToContainer);
+                window.addEventListener('resize', fitContentToContainer);
             </script>
 </body>
 

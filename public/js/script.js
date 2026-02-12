@@ -95,7 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function celebrate() {
         celebration.classList.remove('hidden');
 
+        // 1. Fade in Overlay & Envelope
+        setTimeout(() => {
+            celebration.classList.add('visible');
 
+            // 2. Open Envelope (Flap & Slide Up)
+            setTimeout(() => {
+                const envelope = document.querySelector('.envelope');
+                const card = document.querySelector('.invitation-card');
+
+                if (envelope) envelope.classList.add('open');
+
+                // 3. Expand Card (Scale & Center)
+                setTimeout(() => {
+                    if (card) card.classList.add('expanded');
+                }, 1000); // Wait for slide up to finish
+
+            }, 500); // Small delay after fade in
+
+        }, 10);
 
         // Simple confetti effect
         createConfetti();

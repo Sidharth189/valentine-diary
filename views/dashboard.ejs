@@ -362,6 +362,60 @@
             height: auto;
             display: block;
         }
+
+        /* Pagination Dots */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            max-width: 100%;
+        }
+
+        .page-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-dot:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .page-dot.active {
+            background: #f1c40f;
+            color: #6a1b21;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* Lined Input Style */
+        .line-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #e6c278;
+            caret-color: #f1c40f;
+            color: #fff;
+            text-align: center;
+            font-family: 'Indie Flower';
+            outline: none;
+            transition: border-bottom 0.3s;
+        }
+
+        .line-input:focus {
+            border-bottom: 2px solid #f1c40f;
+        }
     </style>
 </head>
 
@@ -417,6 +471,9 @@
                 <button type="button" class="nav-btn" id="btn-next" onclick="changePage(1)">&#8594;</button>
             </div>
 
+            <!-- Pagination Dots -->
+            <div id="pagination-controls" class="pagination-container"></div>
+
             <!-- 4. Save & Preview (Bottom) -->
             <div class="action-bar">
                 <button type="submit" class="wax-seal-btn" title="Seal & Save">Save</button>
@@ -463,6 +520,14 @@
         let coverData = {
             title: `<%- diary.title %>`,
             description: `<%- diary.description %>`
+        };
+
+        // Final Page Data State
+        let finalPageData = {
+            finalQuestion: `<%- diary.finalQuestion || 'Will you be my Valentine?' %>`,
+            yesLabel: `<%- diary.yesLabel || 'Yes! ❤️' %>`,
+            noLabel: `<%- diary.noLabel || 'No' %>`,
+            successMessage: `<%- diary.successMessage || 'Yay! ❤️ I love you!' %>`
         };
 
         if (pagesData.length < 1) {
@@ -573,6 +638,53 @@
                 `;
                 container.appendChild(div);
             });
+
+            // --- 3. RENDER FINAL PAGE (Index pagesData.length) ---
+            const finalDiv = document.createElement('div');
+            finalDiv.className = 'page-item';
+
+            // Back Cover Style
+            finalDiv.style.background = "#6a1b21";
+            finalDiv.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px)";
+            finalDiv.style.backgroundSize = "4px 4px, 5px 5px";
+            finalDiv.style.border = "none";
+            finalDiv.style.boxShadow = "inset 0 0 20px rgba(0,0,0,0.6)";
+            finalDiv.style.display = "flex";
+            finalDiv.style.flexDirection = "column";
+            finalDiv.style.justifyContent = "center";
+            finalDiv.style.alignItems = "center";
+            finalDiv.style.zIndex = 50;
+
+            if (currentIndex === pagesData.length) finalDiv.classList.add('active');
+            else if (currentIndex > pagesData.length) finalDiv.classList.add('prev');
+
+            finalDiv.innerHTML = `
+                <div class="page-number" style="background:#444; color:#fff; border-color:#666;">End</div>
+                
+                <h3 style="color:#e6c278; font-family:'Dancing Script'; font-size:2rem; margin-bottom:15px; text-shadow:1px 1px 2px black;">The Big Question</h3>
+
+                <label style="color:#e6c278; font-size:0.8rem;">Question Text</label>
+                <input type="text" name="finalQuestion" value="${finalPageData.finalQuestion}" oninput="finalPageData.finalQuestion=this.value" 
+                    class="line-input" style="width:80%; font-size:1.2rem; margin-bottom:15px;">
+
+                <div style="display:flex; gap:10px; width:80%; justify-content:center;">
+                    <div style="flex:1;">
+                        <label style="color:#27ae60; font-size:0.8rem;">'Yes' Button</label>
+                        <input type="text" name="yesLabel" value="${finalPageData.yesLabel}" oninput="finalPageData.yesLabel=this.value"
+                            class="line-input" style="width:100%; color:#27ae60; border-bottom: 2px dashed #27ae60;">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="color:#c0392b; font-size:0.8rem;">'No' Button</label>
+                        <input type="text" name="noLabel" value="${finalPageData.noLabel}" oninput="finalPageData.noLabel=this.value"
+                            class="line-input" style="width:100%; color:#c0392b; border-bottom: 2px dashed #c0392b;">
+                    </div>
+                </div>
+
+                <label style="color:#e6c278; font-size:0.8rem; margin-top:15px;">Success Message</label>
+                <input type="text" name="successMessage" value="${finalPageData.successMessage}" oninput="finalPageData.successMessage=this.value"
+                    class="line-input" style="width:80%; font-size:1.2rem;">
+            `;
+            container.appendChild(finalDiv);
         }
 
         function toggleLayout(index) {
@@ -667,7 +779,7 @@
 
         function changePage(direction) {
             const newIndex = currentIndex + direction;
-            if (newIndex >= -1 && newIndex < pagesData.length) {
+            if (newIndex >= -1 && newIndex <= pagesData.length) {
                 currentIndex = newIndex;
                 renderStack();
                 updateUI();
@@ -694,16 +806,49 @@
 
         function updateUI() {
             if (currentIndex === -1) displayCount.textContent = `Cover`;
+            else if (currentIndex === pagesData.length) displayCount.textContent = `Final Page`;
             else displayCount.textContent = `${currentIndex + 1} / ${pagesData.length}`;
 
             btnPrev.disabled = currentIndex === -1;
-            btnNext.disabled = currentIndex === pagesData.length - 1;
+            btnNext.disabled = currentIndex === pagesData.length;
 
-            // Hide Add Page button on Cover (-1)
+            // Hide Add Page button on Cover (-1) and Final Page
             const btnAdd = document.querySelector('.btn-add');
             if (btnAdd) {
-                btnAdd.style.display = (currentIndex === -1) ? 'none' : 'inline-block';
+                btnAdd.style.display = (currentIndex === -1 || currentIndex === pagesData.length) ? 'none' : 'inline-block';
             }
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const controls = document.getElementById('pagination-controls');
+            controls.innerHTML = '';
+
+            // 1. Cover Dot
+            const coverDot = document.createElement('div');
+            coverDot.className = `page-dot ${currentIndex === -1 ? 'active' : ''}`;
+            coverDot.textContent = 'C';
+            coverDot.title = "Go to Cover";
+            coverDot.onclick = () => { currentIndex = -1; renderStack(); updateUI(); };
+            controls.appendChild(coverDot);
+
+            // 2. Page Dots
+            pagesData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `page-dot ${currentIndex === i ? 'active' : ''}`;
+                dot.textContent = i + 1;
+                dot.onclick = () => { currentIndex = i; renderStack(); updateUI(); };
+                controls.appendChild(dot);
+            });
+
+            // 3. Final Page Dot
+            const finalDot = document.createElement('div');
+            finalDot.className = `page-dot ${currentIndex === pagesData.length ? 'active' : ''}`;
+            finalDot.textContent = '❤️';
+            finalDot.title = "Go to Final Page";
+            finalDot.onclick = () => { currentIndex = pagesData.length; renderStack(); updateUI(); };
+            controls.appendChild(finalDot);
         }
 
         function togglePreview() {
