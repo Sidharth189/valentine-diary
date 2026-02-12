@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Edit Diary</title>
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         body {
             font-family: 'Indie Flower', cursive;
@@ -31,7 +32,7 @@
 
         .dashboard-layout {
             width: 100%;
-            max-width: 700px;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -144,7 +145,6 @@
             display: inline-block;
             font-weight: bold;
             margin-top: 5px;
-            background: rgba(255, 255, 255, 0.8);
             padding: 0 5px;
             font-size: 0.9rem;
         }
@@ -340,12 +340,27 @@
             transform: rotate(-2deg);
         }
 
-        .paid {
-            color: #27ae60;
-        }
-
         .unpaid {
             color: #c0392b;
+        }
+
+        /* Polaroid Sync for Dashboard */
+        .polaroid-preview {
+            background: white;
+            padding: 8px 8px 25px 8px;
+            /* Classic polaroid bottom bar */
+            border: 1px solid #ddd;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+            transform: rotate(-1deg);
+            display: inline-block;
+            margin: 10px 0;
+            max-width: 90%;
+        }
+
+        .polaroid-preview img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
@@ -418,7 +433,7 @@
                     style="position:absolute; top:-15px; right:-15px; background:red; color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.3);">X</button>
                 <div style="color:white; padding:5px; text-align:center; font-size:0.9rem;">Preview Mode (Refresh to see
                     saved changes)</div>
-                <iframe id="preview-frame" style="width:100%; height:800px; border:none; background:white;"></iframe>
+                <iframe id="preview-frame" style="width:100%; height:600px; border:none; background:white;"></iframe>
             </div>
 
         </form>
@@ -429,26 +444,7 @@
         <%= JSON.stringify(diary.pages) %>
     </div>
 
-    <!-- Dummy Payment Modal -->
-    <div id="dummy-payment-modal"
-        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center;">
-        <div
-            style="background:white; padding:30px; border-radius:10px; width:90%; max-width:400px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.5);">
-            <h2 style="color:#2c3e50; font-family:sans-serif; margin-bottom:10px;">Payment Gateway (Test)</h2>
-            <p style="color:#7f8c8d; font-family:sans-serif; margin-bottom:20px;">Paying: <strong>₹9.00</strong></p>
 
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button onclick="simulateSuccess()"
-                    style="background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:1rem;">✅
-                    Success</button>
-                <button onclick="simulateFailure()"
-                    style="background:#c0392b; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:1rem;">❌
-                    Failure</button>
-            </div>
-            <button onclick="closeDummyModal()"
-                style="margin-top:20px; background:transparent; border:none; color:#95a5a6; cursor:pointer; text-decoration:underline;">Cancel</button>
-        </div>
-    </div>
 
     <script>
         console.log("Dashboard Script Initializing...");
@@ -512,13 +508,13 @@
             coverDiv.innerHTML = `
                 <div class="page-number" style="background:#444; color:#fff; border-color:#666;">C</div>
                 
-                <label style="color:#e6c278; font-size:0.8rem;">Cover Title <small>(<span id="char-count-title">${(coverData.title || '').length}</span>/100)</small></label>
+                <label style="color:#e6c278; font-size:0.8rem;">Cover Title <small style="color:#ccc;">(<span id="char-count-title">${(coverData.title || '').length}</span>/100)</small></label>
                 <input type="text" name="title" maxlength="100" value="${coverData.title}" oninput="coverData.title=this.value; document.getElementById('char-count-title').textContent=this.value.length" placeholder="Title..."
                     style="background:transparent; border:none; border-bottom:2px solid #e6c278; color:#e6c278; font-size:2.5rem; text-align:center; font-family:'Dancing Script'; width:90%; margin-bottom:20px; text-shadow:1px 1px 2px black; outline:none; height:auto;">
                 
-                <label style="color:#fff; font-size:0.8rem;">Cover Description <small>(<span id="char-count-desc">${(coverData.description || '').length}</span>/200)</small></label>
+                <label style="color:#e6c278; font-size:0.8rem;">Cover Description <small style="color:#ccc;">(<span id="char-count-desc">${(coverData.description || '').length}</span>/200)</small></label>
                 <textarea name="description" maxlength="200" oninput="coverData.description=this.value; document.getElementById('char-count-desc').textContent=this.value.length" placeholder="Description..."
-                    style="background:rgba(0,0,0,0.2); border:1px solid #e6c278; color:#fff; width:70%; height:80px !important; flex-grow:0; border-radius:5px; padding:5px; font-family:'Indie Flower'; font-size:1.1rem !important; text-align:center; outline:none;">${coverData.description}</textarea>
+                    style="background:transparent; border:1px solid #e6c278; color:#fff; width:70%; height:80px !important; flex-grow:0; border-radius:5px; padding:5px; font-family:'Indie Flower'; font-size:1.1rem !important; text-align:center; outline:none;">${coverData.description}</textarea>
             `;
             container.appendChild(coverDiv);
 
@@ -533,21 +529,30 @@
                 const isImageFirst = page.layout === 'image-first';
 
                 const imageSection = `
-                    <div style="margin: 5px 0; text-align: center; min-height:105px; display:flex; justify-content:center; align-items:center; position:relative;">
-                        <img id="preview-${index}" src="${page.imageUrl || ''}" style="max-width: 100px; max-height: 100px; display: ${page.imageUrl ? 'inline-block' : 'none'}; border: 2px solid #ddd; padding: 2px; border-radius: 4px;">
+                    <div style="margin: 0; text-align: center; position:relative; width:100%; display: ${page.imageUrl ? 'block' : 'none'};">
+                        <div class="polaroid-preview" style="transform: rotate(${index % 2 === 0 ? '-2deg' : '2deg'});">
+                            <img id="preview-${index}" src="${page.imageUrl || ''}">
+                        </div>
                         
-                        <!-- Upload Button (Inside Image Area) -->
-                        <label for="file-${index}" title="Upload Image" style="position:absolute; bottom:5px; right:5px; font-size:1.5rem; cursor:pointer; z-index:15; transition:transform 0.2s; background:rgba(255,255,255,0.7); border-radius:50%; padding:5px;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+                        <!-- Upload Button (Floating) -->
+                        <label for="file-${index}" title="Upload Image" style="position:absolute; top:10px; right:10px; font-size:1.5rem; cursor:pointer; z-index:15; transition:transform 0.2s; background:rgba(255,255,255,0.7); border-radius:50%; padding:5px;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
                             🖼️
                         </label>
                         <input type="file" id="file-${index}" accept="image/*" style="display:none;" onchange="handleFileUpload(this, ${index})">
-                        <span id="upload-status-${index}" style="position:absolute; bottom:40px; right:5px; font-size:0.7rem; color:#27ae60; font-weight:bold;"></span>
+                        <span id="upload-status-${index}" style="position:absolute; top:45px; right:15px; font-size:0.7rem; color:#27ae60; font-weight:bold;"></span>
+                    </div>
+                    
+                    <!-- Placeholder when no image is uploaded -->
+                    <div id="image-placeholder-${index}" style="display: ${page.imageUrl ? 'none' : 'block'}; margin: 10px 0; padding: 20px; border: 2px dashed #ccc; text-align:center; position:relative;">
+                        <span style="opacity:0.5;">No Photo Added</span>
+                        <label for="file-${index}" style="position:absolute; inset:0; cursor:pointer; font-size:0;"></label>
+                        <span id="upload-status-placeholder-${index}" style="display:block; font-size:0.7rem; color:#27ae60; font-weight:bold;"></span>
                     </div>`;
 
                 const textSection = `
-                    <label>📝 Story: <small style="color:#666; float:right;">(<span id="char-count-${index}">${(page.text || '').length}</span>/500)</small></label>
+                    <label style="margin-top:0;">📝 Story: <small style="color:#666; float:right;">(<span id="char-count-${index}">${(page.text || '').length}</span>/500)</small></label>
                     <textarea name="pages[${index}][text]" maxlength="500" placeholder="Once upon a time..." 
-                        style="width: 100%; height: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"
+                        style="width: 100%; height: 200px; padding: 5px 0; border: none; background: transparent; resize: vertical; line-height: 25px;"
                         oninput="updateData(${index}, 'text', this.value); updateCharCount(this, ${index})">${page.text || ''}</textarea>
                     
                     <input type="hidden" name="pages[${index}][imageUrl]" value="${page.imageUrl}" id="hidden-img-${index}">
@@ -704,37 +709,61 @@
         function togglePreview() {
             const container = document.getElementById('preview-container');
             const frame = document.getElementById('preview-frame');
-            const btn = document.querySelector('.btn-preview');
+            const btn = document.querySelector('.stamp-btn');
+            const btnText = btn.querySelector('.stamp-text');
+
             if (container.style.display === 'none') {
                 container.style.display = 'block';
                 frame.src = "/u/<%= diary.slug %>?preview=true&t=" + new Date().getTime();
-                btn.innerHTML = "❌ Close Preview";
-                btn.style.background = "#c0392b";
-                setTimeout(() => container.scrollIntoView({ behavior: 'smooth' }), 100);
+                if (btnText) btnText.innerHTML = "Close Preview";
+                btn.style.background = "#ffdce0"; // Subtle red tint for "close"
+
+                // Scroll to preview area
+                setTimeout(() => {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             } else {
                 container.style.display = 'none';
                 frame.src = "";
-                btn.innerHTML = "👁️ Preview";
-                btn.style.background = "#3498db";
+                if (btnText) btnText.innerHTML = "Preview";
+                btn.style.background = "#fdfbf7"; // Original color
             }
         }
 
-        function payNow() { document.getElementById('dummy-payment-modal').style.display = 'flex'; }
-        function closeDummyModal() { document.getElementById('dummy-payment-modal').style.display = 'none'; }
-
-        async function simulateSuccess() {
+        async function payNow() {
             try {
-                const response = await fetch('/dummy-payment-success', { method: 'POST' });
-                const data = await response.json();
-                if (data.status === "success") { alert("Payment Successful!"); location.reload(); }
-                else alert("Error: " + data.error);
-            } catch (e) { alert("Request Failed"); }
-            closeDummyModal();
-        }
+                const response = await fetch('/create-order', { method: 'POST' });
+                const order = await response.json();
 
-        function simulateFailure() {
-            alert("Payment Failed!");
-            closeDummyModal();
+                const options = {
+                    key: "<%= razorpayKeyId %>",
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "Valentine's Diary",
+                    description: "Unlock & Share Your Story",
+                    order_id: order.id,
+                    handler: async function (response) {
+                        const verifyRes = await fetch('/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(response)
+                        });
+                        const data = await verifyRes.json();
+                        if (data.status === "success") {
+                            alert("Payment Successful! Your diary is unlocked.");
+                            location.reload();
+                        } else {
+                            alert("Payment Verification Failed!");
+                        }
+                    },
+                    theme: { color: "#6a1b21" }
+                };
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } catch (err) {
+                console.error(err);
+                alert("Could not initiate payment. Check server logs.");
+            }
         }
     </script>
 </body>

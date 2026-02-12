@@ -159,7 +159,11 @@ app.get('/dashboard', requireAuth, async (req, res) => {
             return page || { text: '', imageUrl: '' };
         };
 
-        res.render('dashboard', { diary, getPage });
+        res.render('dashboard', {
+            diary,
+            getPage,
+            razorpayKeyId: process.env.RAZORPAY_KEY_ID
+        });
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error");
@@ -240,65 +244,48 @@ app.get('/u/:slug', async (req, res) => {
 
 // --- Payment Routes ---
 
-/* --- Razorpay Routes (Commented out for Dummy Testing) ---
-// app.post('/create-order', requireAuth, async (req, res) => {
-//     try {
-//         const options = {
-//             amount: 900, // amount in the smallest currency unit (9 INR * 100 paise)
-//             currency: "INR",
-//             receipt: "order_rcptid_" + req.session.userId
-//         };
-//         const order = await razorpay.orders.create(options);
-//         res.json(order);
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).send("Error creating order");
-//     }
-// });
-
-// app.post('/verify-payment', requireAuth, async (req, res) => {
-//     try {
-//         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
-//         const body = razorpay_order_id + "|" + razorpay_payment_id;
-//         const expectedSignature = crypto
-//             .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-//             .update(body.toString())
-//             .digest('hex');
-
-//         if (expectedSignature === razorpay_signature) {
-//             // Payment Success! Update Database
-//             const diary = await Diary.findOne({ user: req.session.userId });
-//             diary.isPaid = true;
-//             await diary.save();
-
-//             res.json({ status: "success" });
-//         } else {
-//             res.status(400).json({ status: "failure" });
-//         }
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).send("Error verifying payment");
-//     }
-// });
-*/
-
-// --- Dummy Payment Route ---
-app.post('/dummy-payment-success', requireAuth, async (req, res) => {
+app.post('/create-order', requireAuth, async (req, res) => {
     try {
-        const diary = await Diary.findOne({ user: req.session.userId });
-        if (diary) {
+        const options = {
+            amount: 900, // amount in the smallest currency unit (9 INR * 100 paise)
+            currency: "INR",
+            receipt: "order_rcptid_" + req.session.userId
+        };
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Error creating order");
+    }
+});
+
+app.post('/verify-payment', requireAuth, async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .update(body.toString())
+            .digest('hex');
+
+        if (expectedSignature === razorpay_signature) {
+            // Payment Success! Update Database
+            const diary = await Diary.findOne({ user: req.session.userId });
             diary.isPaid = true;
             await diary.save();
+
             res.json({ status: "success" });
         } else {
-            res.status(404).json({ error: "Diary not found" });
+            res.status(400).json({ status: "failure" });
         }
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send("Error verifying payment");
     }
 });
+
+
 
 // --- Root Route ---
 app.get('/', (req, res) => {
