@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <% if (typeof isPreview !=='undefined' && isPreview) { %>
+        <div
+            style="position:fixed; top:0; left:0; width:100%; background:#f39c12; color:white; text-align:center; padding:10px; z-index:9999; font-family:sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+            👁️ <strong>Preview Mode</strong>: Only you can see this. <a href="/dashboard"
+                style="color:white; text-decoration:underline;">Pay ₹9 to Unlock & Share</a>
+        </div>
+        <% } %>
+
+            <div class="scene">
+                <div class="book" id="book">
+                    <!-- Page 1: Cover -->
+                    <div class="page page-cover" id="p1" style="z-index: 6;">
+                        <div class="front cover">
+                            <!-- User Editable Title & Description -->
+                            <h1>
+                                <%= diary.title %>
+                            </h1>
+                            <p>
+                                <%= diary.description %>
+                            </p>
+                            <div class="click-hint">Click to open &rarr;</div>
+                        </div>
+                        <div class="back">
+                            <div class="content">
+                                <!-- Inner Cover: Page 1 Content -->
+                                <% if (diary.pages.length> 0) { const firstPage = diary.pages[0]; %>
+                                    <% if (firstPage.layout==='image-first' ) { %>
+                                        <% if (firstPage.imageUrl) { %>
+                                            <div class="photo-placeholder" style="transform: rotate(2deg);">
+                                                <img src="<%= firstPage.imageUrl %>">
+                                            </div>
+                                            <% } %>
+                                                <p>
+                                                    <%= firstPage.text %>
+                                                </p>
+                                                <% } else { %>
+                                                    <p>
+                                                        <%= firstPage.text %>
+                                                    </p>
+                                                    <% if (firstPage.imageUrl) { %>
+                                                        <div class="photo-placeholder" style="transform: rotate(2deg);">
+                                                            <img src="<%= firstPage.imageUrl %>">
+                                                        </div>
+                                                        <% } %>
+                                                            <% } %>
+                                                                <% } else { %>
+                                                                    <!-- Empty Cover if no pages -->
+                                                                    <div
+                                                                        style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; opacity:0.1;">
+                                                                        <div style="font-size: 5em;">❦</div>
+                                                                    </div>
+                                                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Pages -->
+                    <!-- Dynamic Pages: Loop starting from index 1 -->
+                    <% for (let i=1; i < diary.pages.length; i +=2) { const frontPage=diary.pages[i]; const
+                        backPage=diary.pages[i+1]; /* Sheets start at sheetIndex 2 (since p1 is cover) */ const
+                        sheetIndex=Math.floor(i / 2) + 2; %>
+                        <div class="page" id="p<%= sheetIndex %>" data-z-index="<%= 20 - sheetIndex %>">
+                            <!-- FRONT SIDE (Right Page) -->
+                            <div class="front">
+                                <div class="content">
+                                    <% if (frontPage) { %>
+                                        <!-- Page Content (Front) -->
+                                        <% if (frontPage.layout==='image-first' ) { %>
+                                            <% if (frontPage.imageUrl) { %>
+                                                <div class="photo-placeholder" style="transform: rotate(-2deg);">
+                                                    <img src="<%= frontPage.imageUrl %>">
+                                                </div>
+                                                <% } %>
+                                                    <p>
+                                                        <%= frontPage.text %>
+                                                    </p>
+                                                    <% } else { %>
+                                                        <p>
+                                                            <%= frontPage.text %>
+                                                        </p>
+                                                        <% if (frontPage.imageUrl) { %>
+                                                            <div class="photo-placeholder"
+                                                                style="transform: rotate(-2deg);">
+                                                                <img src="<%= frontPage.imageUrl %>">
+                                                            </div>
+                                                            <% } %>
+                                                                <% } %>
+                                                                    <div class="page-number">
+                                                                        <%= i + 1 %>
+                                                                    </div>
+                                                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- BACK SIDE (Left Page of next spread) -->
+                            <div class="back">
+                                <div class="content">
+                                    <% if (backPage) { %>
+                                        <!-- Page Content (Back) -->
+                                        <% if (backPage.layout==='image-first' ) { %>
+                                            <% if (backPage.imageUrl) { %>
+                                                <div class="photo-placeholder" style="transform: rotate(2deg);">
+                                                    <img src="<%= backPage.imageUrl %>">
+                                                </div>
+                                                <% } %>
+                                                    <p>
+                                                        <%= backPage.text %>
+                                                    </p>
+                                                    <% } else { %>
+                                                        <p>
+                                                            <%= backPage.text %>
+                                                        </p>
+                                                        <% if (backPage.imageUrl) { %>
+                                                            <div class="photo-placeholder"
+                                                                style="transform: rotate(2deg);">
+                                                                <img src="<%= backPage.imageUrl %>">
+                                                            </div>
+                                                            <% } %>
+                                                                <% } %>
+                                                                    <div class="page-number">
+                                                                        <%= i + 2 %>
+                                                                    </div>
+                                                                    <% } else { %>
+                                                                        <!-- Blank/Heart if odd number of pages -->
+                                                                        <div style="font-size: 2em; color: #e74c3c;">
+                                                                            ❤️</div>
+                                                                        <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <!-- Final Question Page (ID comes after all user pages) -->
+                            <!-- Proposal Page comes after the last sheet -->
+                            <div class="page" id="p<%= Math.ceil(diary.pages.length / 2) + 2 %>" style="z-index: 1;">
+                                <div class="front">
+                                    <div class="content final-page">
+                                        <h2>So, I have a question...</h2>
+                                        <p>Will you be my Valentine?</p>
+                                        <div class="buttons">
+                                            <button id="yes-btn">Yes! ❤️</button>
+                                            <button id="no-btn">No</button>
+                                        </div>
+                                        <div id="response-msg"></div>
+                                    </div>
+                                </div>
+                                <div class="back back-cover">
+                                    <!-- Back cover -->
+                                    <p>To be continued...</p>
+                                </div>
+                            </div>
+                </div>
+            </div>
+
+            <!-- Celebration Overlay -->
+            <div id="celebration" class="hidden">
+                <div class="confetti"></div>
+                <h1>Yay! ❤️ I love you!</h1>
+            </div>
+
+            <script src="/js/script.js"></script>
+            <script>
+                // Apply z-index from data attribute to make linter happy
+                document.querySelectorAll('.page[data-z-index]').forEach(el => {
+                    el.style.zIndex = el.getAttribute('data-z-index');
+                });
+
+                // Add body class for preview mode
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('preview') === 'true') {
+                    document.body.classList.add('body-preview');
+                }
+
+                // Auto-scale text to fit container
+                function fitTextToContainer() {
+                    document.querySelectorAll('.content').forEach(content => {
+                        const p = content.querySelector('p');
+                        if (!p) return;
+
+                        // Reset to default to re-measure
+                        let fontSize = 1.2;
+                        p.style.fontSize = fontSize + 'rem';
+
+                        // Reduce if overflowing
+                        while (content.scrollHeight > content.clientHeight && fontSize > 0.7) {
+                            fontSize -= 0.05;
+                            p.style.fontSize = fontSize + 'rem';
+                        }
+                    });
+                }
+                window.addEventListener('load', fitTextToContainer);
+                window.addEventListener('resize', fitTextToContainer);
+            </script>
+</body>
+
+</html>

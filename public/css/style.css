@@ -1,0 +1,540 @@
+/* Main Reset & Body */
+body {
+    /* Wood Texture via CSS */
+    background-color: #deb887;
+    background:
+        repeating-linear-gradient(to right, transparent 0%, #e6caa5 10%, transparent 20%),
+        repeating-linear-gradient(to bottom, #e0c39e 0%, #e0c39e 30%, #dcb894 30%, #dcb894 100%);
+    background-size: 100% 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Indie Flower', cursive;
+    /* Handwritten feel */
+}
+
+/* Preview Mode Scale */
+body.body-preview .scene {
+    transform: scale(0.6) !important;
+    margin-top: -100px;
+}
+
+/* 3D Scene Container */
+.scene {
+    width: 420px;
+    /* Increased width */
+    height: 560px;
+    /* Increased height */
+    perspective: 1500px;
+    position: relative;
+}
+
+/* The Book Itself */
+.book {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+    transform: rotateZ(-8deg);
+    /* Initial Casual Tilt */
+}
+
+.book.open {
+    transform: translateX(210px) rotateZ(0deg);
+    /* Straighten and center */
+    /* Shift right by 50% of width (420px/2) to center spine */
+}
+
+.book.closed-back {
+    /* Move spine to right edge (100% = 420px) so the left-flipped pages (-100% width) are centered */
+    transform: translateX(420px) rotateZ(-8deg) !important;
+    /* Pivot around the SPINE (left edge) to match normal rotation physics */
+    transform-origin: 0% 50% !important;
+}
+
+/* Pages */
+.page {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: left;
+    /* Flip from the spine */
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+    cursor: pointer;
+}
+
+/* Faces of the page */
+/* Faces of the page */
+/* Faces of the page */
+/* Faces of the page */
+.front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 20px 20px 40px;
+    /* Left padding for spiral */
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #fffbf0;
+
+    /* Lined Paper Effect (No Margin) */
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    /* Horizontal lines only */
+    background-size: 100% 25px;
+
+    border: 1px solid #e0e0e0;
+    box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px 20px 20px;
+    /* Right padding for spiral/margin balance */
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #fffbf0;
+
+    /* Lined Paper Effect (No Margin) */
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    /* Horizontal lines only */
+    background-size: 100% 25px;
+
+    border: 1px solid #e0e0e0;
+    box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.05);
+    transform: rotateY(180deg);
+    border-left: none;
+    box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Spiral Binding Effect */
+.front::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    bottom: 5px;
+    width: 30px;
+    background:
+        radial-gradient(circle at 8px 50%, #333 4px, transparent 5px),
+        /* Holes */
+        repeating-linear-gradient(to bottom, transparent 0, transparent 20px, #aaa 20px, #333 22px, #aaa 24px, transparent 24px);
+    /* Wires */
+    background-size: 30px 30px;
+    /* Size of one repetition */
+    z-index: 10;
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+    /* Edge line */
+}
+
+/* Cover Styling */
+/* Cover Styling */
+.cover {
+    /* Leather Texture - Refined */
+    background-color: #6a1b21;
+    /* Deep Burgundy Base */
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 4px 4px, 5px 5px;
+    background-position: 0 0, 2px 2px;
+
+    color: #f1c40f;
+    /* Gold text for luxury look */
+    border-radius: 5px 15px 15px 5px;
+    border: none;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+    /* Inner shadow for depth */
+}
+
+.cover h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3em;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: #e6c278;
+    /* Goldish text */
+}
+
+/* Back Cover Styling */
+.back-cover {
+    /* Leather Texture (Same as front) */
+    background-color: #6a1b21 !important;
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px) !important;
+    background-size: 4px 4px, 5px 5px !important;
+    background-position: 0 0, 2px 2px !important;
+
+    color: white !important;
+    border-radius: 5px 15px 15px 5px !important;
+    border: none !important;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
+    /* Inner shadow for depth */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Back cover text */
+.back-cover p {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem !important;
+    color: #ffd700 !important;
+    /* Gold */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
+
+
+/* Page Content Styling */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Hide overflow to prevent scrollbars */
+    justify-content: flex-start;
+    /* Start from top */
+    padding-right: 5px;
+    /* Space for scrollbar */
+    box-sizing: border-box;
+    /* Include padding in width */
+
+    /* Thin Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #d35400 transparent;
+}
+
+/* Webkit Scrollbar */
+.content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: rgba(211, 84, 0, 0.3);
+    border-radius: 10px;
+}
+
+.content p {
+    font-size: 1.1em;
+    /* Slightly smaller to fit more */
+    color: #2c3e50;
+    white-space: pre-wrap;
+    /* Preserve line breaks */
+    overflow-wrap: break-word;
+    /* Ensure long words don't overflow */
+    word-wrap: break-word;
+    /* Legacy support */
+    text-align: left;
+    /* Better for reading stories */
+    width: 100%;
+    line-height: 1.6;
+}
+
+.photo-placeholder {
+    /* Responsive Sizing */
+    width: auto;
+    max-width: 90%;
+    /* Occupy most of width but leave margin */
+    height: auto;
+    max-height: 45%;
+    /* Restrict vertical height to prevent overlapping text */
+
+    background-color: white;
+    padding: 8px;
+    /* White frame */
+
+    border: 1px solid #ddd;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    transform: rotate(-2deg);
+    margin: 10px auto;
+    /* Center and separate */
+    position: relative;
+}
+
+.photo-placeholder img {
+    max-width: 100%;
+    max-height: 250px;
+    /* Cap image height explicitly */
+    object-fit: contain;
+    display: block;
+}
+
+.photo-placeholder:nth-child(even) {
+    transform: rotate(2deg);
+}
+
+.click-hint {
+    margin-top: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Page Flip Class */
+.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Final Page Buttons */
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Indie Flower', cursive;
+    transition: transform 0.2s, background 0.3s;
+}
+
+#yes-btn {
+    background-color: #27ae60;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#yes-btn:hover {
+    transform: scale(1.1);
+    background-color: #2ecc71;
+}
+
+#no-btn {
+    background-color: #c0392b;
+    color: white;
+    position: relative;
+    /* For movement */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    /* Keep transition for non-broken state */
+}
+
+/* Broken Button Animation */
+.broken {
+    animation: fall 1.5s forwards ease-in;
+    pointer-events: none;
+    /* Prevent clicking again */
+    background-color: #7f8c8d !important;
+    /* Look "dead" */
+    box-shadow: none !important;
+}
+
+@keyframes fall {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(20deg);
+    }
+
+    40% {
+        transform: rotate(-15deg);
+    }
+
+    60% {
+        transform: rotate(10deg);
+        transform-origin: top left;
+    }
+
+    80% {
+        transform: translateY(50px) rotate(45deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(400px) rotate(90deg);
+        opacity: 0;
+    }
+}
+
+/* Celebration Overlay */
+#celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 192, 203, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    flex-direction: column;
+    animation: fadeIn 0.5s;
+}
+
+#celebration h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4em;
+    color: #c0392b;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 600px) {
+    .scene {
+        width: 85vw;
+        /* Almost full width on mobile */
+        height: 60vh;
+    }
+
+    .book.open {
+        transform: translateX(42.5vw) rotateZ(0deg);
+        /* Shift by half of 85vw and straighten */
+    }
+
+    .book.closed-back {
+        transform: translateX(85vw) rotateZ(-8deg) !important;
+        transform-origin: 0% 50% !important;
+    }
+
+    .cover h1 {
+        font-size: 2em;
+    }
+
+    .content p {
+        font-size: 1em;
+        /* Smaller text for mobile */
+    }
+
+    .photo-placeholder {
+        max-width: 95%;
+        max-height: 45%;
+        width: auto;
+        height: auto;
+    }
+
+    .buttons button {
+        padding: 8px 15px;
+        font-size: 1em;
+    }
+
+    #celebration h1 {
+        font-size: 2.5em;
+        /* Smaller celebration text */
+    }
+}
+
+/* Tablet Media Query */
+@media (min-width: 601px) and (max-width: 900px) {
+    .scene {
+        width: 550px;
+        height: 700px;
+    }
+
+    .book.open {
+        transform: translateX(275px) rotateZ(0deg);
+        /* Half of 550px */
+    }
+
+    /* Remove duplicate/conflicting rule if possible, or override it correctly */
+    .book.closed-back {
+        transform: translateX(550px) rotateZ(-8deg) !important;
+        transform-origin: 0% 50% !important;
+    }
+}
+
+/* Landscape / Short Screen Query */
+@media (max-height: 600px) {
+    .scene {
+        height: 80vh;
+        /* Use more vertical space */
+        width: 50vh;
+        /* Maintain aspect ratio roughly based on height */
+    }
+
+    .book.open {
+        transform: translateX(25vh) rotateZ(0deg);
+        /* Half of width */
+    }
+
+    .book.closed-back {
+        transform: translateX(50vh) rotateZ(-8deg) !important;
+        transform-origin: 0% 50% !important;
+    }
+
+    .cover h1 {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+    }
+
+    .content {
+        gap: 5px;
+    }
+
+    .photo-placeholder {
+        max-width: 50%;
+        max-height: 85%;
+    }
+
+    .click-hint {
+        display: none;
+        /* Save space */
+    }
+}
