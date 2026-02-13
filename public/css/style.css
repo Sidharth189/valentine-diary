@@ -1,25 +1,73 @@
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
 /* Main Reset & Body */
 body {
-    /* Wood Texture via CSS */
-    background-color: #deb887;
-    background:
-        repeating-linear-gradient(to right, transparent 0%, #e6caa5 10%, transparent 20%),
-        repeating-linear-gradient(to bottom, #e0c39e 0%, #e0c39e 30%, #dcb894 30%, #dcb894 100%);
-    background-size: 100% 100%;
+    /* User Provided Background */
+    background: url('/images/3bd3e328-e721-4414-bfc0-31551219fea5.png') no-repeat center center fixed;
+    background-size: cover;
 
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
+    width: 100%;
     margin: 0;
     overflow: hidden;
+    position: fixed;
+    /* Lock to viewport */
     font-family: 'Indie Flower', cursive;
     /* Handwritten feel */
 }
 
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Floating Background Elements (Roses, Hearts, Stars) */
+.floating-bg-item {
+    position: fixed;
+    pointer-events: none;
+    z-index: -1;
+    animation: floatUp linear infinite;
+    will-change: transform, opacity;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.7;
+    }
+
+    90% {
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
 /* Preview Mode Scale */
 body.body-preview .scene {
-    transform: scale(0.6) !important;
+    /* Scale handled by JS */
     margin-top: -100px;
 }
 
@@ -31,6 +79,53 @@ body.body-preview .scene {
     /* Increased height */
     perspective: 1500px;
     position: relative;
+    /* Floating Animation */
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Floating Shadow */
+.scene::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    /* Below the book */
+    left: 5%;
+    width: 90%;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    opacity: 0.6;
+    transform: rotateX(90deg) translateZ(-50px);
+    /* Lay flat on "floor" */
+    animation: shadow 6s ease-in-out infinite;
+    z-index: -1;
+    /* Behind book */
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes shadow {
+
+    0%,
+    100% {
+        transform: rotateX(90deg) translateZ(-50px) scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: rotateX(90deg) translateZ(-50px) scale(0.85);
+        opacity: 0.3;
+    }
 }
 
 /* The Book Itself */
@@ -450,140 +545,132 @@ button {
 }
 
 /* Envelope & Animation */
+/* --- Card-Only Celebration Design --- */
+
+/* Wrapper for centering */
 .envelope-wrapper {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: scale(0.8);
-    opacity: 0;
-    transition: opacity 0.5s;
-}
-
-#celebration.visible .envelope-wrapper {
-    opacity: 1;
-}
-
-.envelope {
-    position: relative;
-    width: 300px;
-    height: 200px;
-    background: #c0392b;
-    z-index: 1001;
-}
-
-.envelope-back {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background: #c0392b;
+    /* No scaling on wrapper, let card scale */
 }
 
-.envelope-front {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-bottom: 150px solid #e74c3c;
-    /* Slightly lighter red */
-    z-index: 1003;
-}
-
+/* Hide Envelope Elements */
+.envelope,
+.envelope-back,
+.envelope-front,
 .envelope-top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-top: 100px solid #c0392b;
-    transform-origin: top;
-    transition: transform 0.6s ease-in-out, z-index 0.2s 0.6s;
-    z-index: 1004;
+    display: none !important;
 }
 
-.envelope.open .envelope-top {
-    transform: rotateX(180deg);
-    z-index: 1000;
-    /* Moves behind card after opening */
-}
-
-/* The Card inside Envelope */
+/* The Card (Now Standalone) */
 .invitation-card {
-    background: #ffe4e1;
-    width: 280px;
-    height: 180px;
-    position: absolute;
-    bottom: 0;
-    left: 10px;
-    /* Center horizontally (300-280)/2 */
+    background: #fff;
+    width: 800px;
+    /* Wider Rectangle */
+    max-width: 95vw;
+    /* Responsive width */
+    height: auto;
+    /* Auto height to fit content */
+    min-height: 300px;
+    /* Minimum size for short text */
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    z-index: 1002;
-    /* Behind front, ahead of back */
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-
-    transition: transform 1s ease-in-out 0.6s, z-index 0s 1s, width 1s 1.6s, height 1s 1.6s, bottom 1s 1.6s, left 1s 1.6s;
-    transform-origin: bottom center;
-}
-
-/* Slide Out Animation */
-.envelope.open .invitation-card {
-    transform: translateY(-100px);
-    /* Slide up initially */
-}
-
-/* Expanded Card State (Final) */
-.envelope.open .invitation-card.expanded {
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     z-index: 1005;
-    /* On top of everything */
-    transform: translateY(-50px) scale(1.5);
-    /* Move to center and scale up */
-}
 
-/* Inner Decorative Border - Hidden initially or scaled */
-.card-border {
-    border: 3px double #c0392b;
-    width: 90%;
-    height: 90%;
     display: flex;
+    flex-direction: column;
+    /* Allow content to stack */
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    /* Outer padding */
+    box-sizing: border-box;
+
+    /* Pop-In Animation */
+    transform: scale(0.5);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.success-text {
-    font-family: 'Great Vibes', cursive;
-    font-size: 1.8em;
-    /* Start smaller for envelope */
-    color: #880e4f;
-    margin: 0;
-    white-space: nowrap;
-    /* Single line */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: font-size 1s 1.6s;
-}
-
-/* Text Grows when card expands */
-.envelope.open .invitation-card.expanded .success-text {
-    font-size: 2.5em;
-    white-space: nowrap;
-}
-
+/* Visible State */
 #celebration.visible .invitation-card {
     transform: scale(1);
     opacity: 1;
+}
+
+/* Decoration Border */
+.invitation-card .card-border {
+    border: 3px double #c0392b;
+    /* Elegant Red Double Border */
+    width: 100%;
+    height: 100%;
+    /* Fills the card */
+    min-height: 260px;
+    /* Ensure border looks good even if empty */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    /* Inner padding for text */
+    box-sizing: border-box;
+    text-align: center;
+
+    /* Subtle paper texture with Custom Background */
+    /* Reduced opacity to 0.65 for more visibility */
+    background: linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)),
+        url('/images/valentine-bg.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* The Success Text */
+.success-text {
+    font-family: 'Pinyon Script', cursive;
+    /* Requested Perfecto Calligraphy Style */
+    font-weight: 400;
+    font-size: 3.5rem;
+    /* Larger for Pinyon Script's elegance */
+    color: #c0392b;
+    margin: 0;
+    white-space: pre-line;
+    /* Collapses spaces but keeps newlines (Fixes alignment) */
+    line-height: 1.3;
+    width: 100%;
+    text-align: center;
+    /* Ensure centering */
+    display: block;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+    /* Stronger shadow for contrast */
+}
+
+/* Decorative Icon (Optional, can add heart) */
+.success-text::after {
+    content: '❤';
+    display: block;
+    font-size: 2rem;
+    margin-top: 15px;
+    color: #e74c3c;
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
 }
 
 /* Inner Decorative Border */
@@ -595,28 +682,8 @@ button {
     position: relative;
 }
 
-/* ... existing logic ... */
 
-.success-text {
-    font-family: 'Great Vibes', cursive;
-    /* More romantic font if available, falling back to cursive */
-    font-size: 3.5em;
-    /* Much larger font */
-    margin: 10px 0;
-    line-height: 1.2;
-    color: #880e4f;
-    /* Deep pink/burgundy */
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-}
 
-.decoration {
-    font-size: 2em;
-    margin: 20px 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    align-items: center;
-}
 
 .signature {
     font-family: 'Dancing Script', cursive;
@@ -629,105 +696,108 @@ button {
     display: none !important;
 }
 
-/* Media Queries for Mobile */
-@media (max-width: 600px) {
+/* --- Fluid Responsive Design --- */
+
+/* 
+   Strategy: Scale the entire .scene container.
+   Base .scene size: 420px x 560px.
+   Open Book width: ~840px (plus margins).
+*/
+
+/* Tablet / Small Desktop (600px - 950px) */
+@media (max-width: 950px) {
     .scene {
-        width: 85vw;
-        /* Almost full width on mobile */
-        height: 60vh;
+        /* Scale handled by JS */
+        transform-origin: center center;
+    }
+}
+
+/* Mobile (Portrait and Small Landscape) */
+@media (max-width: 600px) {
+
+    /* 
+       On mobile, the open book (840px wide) is too wide.
+       We must scale it down significantly OR change behavior.
+       Scaling it down:
+    */
+    .scene {
+        /* Scale handled by JS */
+        transform-origin: center center;
+        /* Reduce actual layout space taken */
+        margin-top: -100px;
+        margin-bottom: -100px;
     }
 
     .book.open {
-        transform: translateX(42.5vw) rotateZ(0deg);
-        /* Shift by half of 85vw and straighten */
+        /* Center the OPEN book (which is 840px wide internal) */
+        /* Translation is still 210px internal. */
+        /* If we just scale, it stays centered. */
+        transform: translateX(210px) rotateZ(0deg);
     }
 
-    .book.closed-back {
-        transform: translateX(85vw) rotateZ(-8deg) !important;
-        transform-origin: 0% 50% !important;
+    /* 
+       However, purely scaling makes text tiny.
+       We should scale the container but Increase font size inside?
+       Or, sticking to the user request "reduce the size of diary and pages".
+       They WANT it smaller to fit.
+    */
+
+    /* Card Overlay Mobile Adjustments */
+    #celebration h1 {
+        font-size: 1.5rem;
     }
 
-    .cover h1 {
-        font-size: 2em;
+    /* Ensure card fits comfortably */
+    .invitation-card {
+        width: 100%;
+        /* Full width of container (minus padding) */
+        max-width: 95vw;
+        padding: 10px;
+        /* Reduced padding */
     }
 
-    .content p {
-        font-size: 1em;
+    .invitation-card .card-border {
+        padding: 15px;
+        /* Reduced inner padding */
+    }
+
+    .success-text {
+        font-size: 1.8rem;
         /* Smaller text for mobile */
     }
 
-    .photo-placeholder {
-        max-width: 95%;
-        max-height: 45%;
-        width: auto;
-        height: auto;
+    /* Mobile text and interactive elements scaling */
+    .content p {
+        font-size: 2.2em;
+        line-height: 1.3;
     }
 
     .buttons button {
-        padding: 8px 15px;
-        font-size: 1em;
-    }
-
-    #celebration h1 {
-        font-size: 2.5em;
-        /* Smaller celebration text */
-    }
-}
-
-/* Tablet Media Query */
-@media (min-width: 601px) and (max-width: 900px) {
-    .scene {
-        width: 550px;
-        height: 700px;
-    }
-
-    .book.open {
-        transform: translateX(275px) rotateZ(0deg);
-        /* Half of 550px */
-    }
-
-    /* Remove duplicate/conflicting rule if possible, or override it correctly */
-    .book.closed-back {
-        transform: translateX(550px) rotateZ(-8deg) !important;
-        transform-origin: 0% 50% !important;
-    }
-}
-
-/* Landscape / Short Screen Query */
-@media (max-height: 600px) {
-    .scene {
-        height: 80vh;
-        /* Use more vertical space */
-        width: 50vh;
-        /* Maintain aspect ratio roughly based on height */
-    }
-
-    .book.open {
-        transform: translateX(25vh) rotateZ(0deg);
-        /* Half of width */
-    }
-
-    .book.closed-back {
-        transform: translateX(50vh) rotateZ(-8deg) !important;
-        transform-origin: 0% 50% !important;
-    }
-
-    .cover h1 {
-        font-size: 1.5em;
-        margin-bottom: 5px;
-    }
-
-    .content {
-        gap: 5px;
-    }
-
-    .photo-placeholder {
-        max-width: 50%;
-        max-height: 85%;
+        font-size: 1.6em;
+        padding: 12px 24px;
     }
 
     .click-hint {
-        display: none;
-        /* Save space */
+        font-size: 1.5em;
+    }
+
+    /* Compensate for Preview Mode on Mobile */
+    body.body-preview .scene {
+        transform: scale(0.45);
+        margin-top: -100px;
+    }
+}
+
+/* Short Screens / Landscape Mobile */
+@media (max-height: 600px) {
+    .scene {
+        /* Scale handled by JS */
+        margin-top: -100px;
+        margin-bottom: -100px;
+    }
+
+    .content p {
+        font-size: 2em;
+        /* Increase readability on small scale */
     }
 }

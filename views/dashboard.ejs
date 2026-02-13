@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,26 +8,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
         body {
             font-family: 'Indie Flower', cursive;
-            background-color: #8d6e63;
-            /* Vertical Wood Texture - Lighter */
-            background-image:
-                repeating-linear-gradient(90deg,
-                    rgba(255, 255, 255, 0.05) 0px,
-                    rgba(255, 255, 255, 0.05) 1px,
-                    transparent 1px,
-                    transparent 40px),
-                linear-gradient(to bottom, #a1887f 0%, #6d4c41 100%);
-            background-size: 40px 100%, 100% 100%;
+            background: linear-gradient(135deg, #fff5f5 0%, #fef8f0 100%);
             margin: 0;
             padding: 10px;
             color: #333;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
+            width: 100%;
         }
 
         .dashboard-layout {
@@ -38,6 +40,12 @@
             gap: 15px;
             /* Reduced gap */
             align-items: center;
+            /* Added container bg for contrast */
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         /* --- 1. Top Section: Payment --- */
@@ -67,8 +75,8 @@
         }
 
         h1 {
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #6a1b21;
+            text-shadow: none;
             font-size: 2rem;
             margin: 10px;
             transform: rotate(-2deg);
@@ -194,11 +202,16 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            background: rgba(255, 255, 255, 0.15);
+            width: 100%;
+            background: rgba(253, 251, 247, 0.95);
+            /* Stronger cream background */
             padding: 5px 15px;
             border-radius: 50px;
             backdrop-filter: blur(5px);
             margin-top: 20px;
+            border: 1px solid #e0d0c0;
+            /* Subtle border */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .nav-btn {
@@ -363,69 +376,141 @@
             display: block;
         }
 
-        /* Pagination Dots */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-            max-width: 100%;
+        /* --- Background Particles --- */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .page-dot {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .page-dot:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .page-dot.active {
-            background: #f1c40f;
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             color: #6a1b21;
+            font-size: 1.2rem;
+            text-decoration: none;
             font-weight: bold;
-            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
-        /* Lined Input Style */
-        .line-input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px dashed #e6c278;
-            caret-color: #f1c40f;
-            color: #fff;
-            text-align: center;
-            font-family: 'Indie Flower';
-            outline: none;
-            transition: border-bottom 0.3s;
-        }
+        /* --- Responsive Styles --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
 
-        .line-input:focus {
-            border-bottom: 2px solid #f1c40f;
+            .dashboard-layout {
+                width: 100%;
+                max-width: 100%;
+                padding: 15px 10px;
+                border-radius: 10px;
+                margin: 0;
+                overflow: hidden;
+                /* Prevent internal spill */
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin: 5px;
+            }
+
+            #pages-stack-container {
+                height: 65vh;
+                /* Dynamic height for mobile */
+                min-height: 400px;
+            }
+
+            .page-item {
+                padding: 15px 15px 15px 25px;
+                /* Smaller padding, less left space */
+                background-size: 100% 20px;
+                /* Tighter lines */
+                line-height: 20px;
+            }
+
+            .page-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .wax-seal-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1rem;
+            }
+
+            .stamp-btn {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .action-bar {
+                gap: 15px;
+            }
+
+            textarea,
+            input[type="text"] {
+                font-size: 1rem;
+                line-height: 20px;
+            }
+
+            .stack-controls {
+                padding: 5px 10px;
+            }
+
+            .nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .polaroid-preview {
+                max-width: 100%;
+                margin: 5px 0;
+                transform: rotate(0deg);
+                /* Straighten for better space usage */
+                padding: 5px 5px 20px 5px;
+            }
+
+            .logout-btn {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                padding: 4px 8px;
+                font-size: 0.9rem;
+                z-index: 1000;
+            }
+
+            .status-bar {
+                margin-top: 30px;
+                /* Push down to avoid logout button overlap */
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="dashboard-layout">
 
-        <!-- Logout Button (Top Right) -->
-        <a href="/logout"
-            style="position:absolute; top:20px; right:20px; color:rgba(255,255,255,0.8); font-size:1.2rem; text-decoration:none; font-weight:bold; background:rgba(0,0,0,0.2); padding:5px 10px; border-radius:5px; transition:all 0.2s;">Logout
-            ↪</a>
+    <!-- Body Content -->
+    <canvas class="bg-particles" id="bg-canvas"></canvas>
+
+    <!-- Logout Button (Fixed Top Right) -->
+    <a href="/logout" class="logout-btn">Logout &#10060;</a>
+
+    <div class="dashboard-layout">
 
         <!-- 1. Payment Status (Top) -->
         <div class="status-bar">
@@ -443,7 +528,7 @@
                         style="color:#2980b9; text-decoration:none; font-weight:bold;">Visit Link</a>
                     <span style="color:#2980b9; margin: 0 5px;">|</span>
                     <button
-                        onclick="navigator.clipboard.writeText(window.location.origin + '/u/<%= diary.slug %>'); alert('Link Copied! 📋')"
+                        onclick="navigator.clipboard.writeText(window.location.origin + '/u/<%= diary.slug %>'); alert('Link Copied! \u2705')"
                         style="background:none; border:none; color:#2980b9; font-weight:bold; cursor:pointer; font-family:inherit; font-size:1rem; padding:0; text-decoration:underline;"
                         title="Copy to clipboard">Copy Link</button>
                     <% } %>
@@ -460,24 +545,27 @@
 
             <!-- 3. Navigation & Add Controls -->
             <div class="stack-controls">
+                <button type="button" class="nav-btn" onclick="goToFirst()" title="Go to Cover">|&laquo;</button>
                 <button type="button" class="nav-btn" id="btn-prev" onclick="changePage(-1)">&#8592;</button>
-                <div style="text-align:center; color:white;">
-                    <span id="current-page-display" style="font-size:1.1rem; font-weight:bold;">Cover</span>
+
+                <div style="text-align:center; color:#3e2723;">
+                    <span id="current-page-display"
+                        style="font-size:1.1rem; font-weight:bold; min-width: 80px; display:inline-block;">Cover</span>
                     <span style="margin:0 5px; opacity:0.5;">|</span>
                     <button type="button" class="btn-add" onclick="addPage()"
                         style="background:none; border:none; color:#f1c40f; text-decoration:underline; cursor:pointer; font-family:inherit; font-weight:bold;">+
                         Add Page</button>
                 </div>
-                <button type="button" class="nav-btn" id="btn-next" onclick="changePage(1)">&#8594;</button>
-            </div>
 
-            <!-- Pagination Dots -->
-            <div id="pagination-controls" class="pagination-container"></div>
+                <button type="button" class="nav-btn" id="btn-next" onclick="changePage(1)">&#8594;</button>
+                <button type="button" class="nav-btn" onclick="goToLast()" title="Go to Final Page">&raquo;|</button>
+            </div>
 
             <!-- 4. Save & Preview (Bottom) -->
             <div class="action-bar">
                 <button type="submit" class="wax-seal-btn" title="Seal & Save">Save</button>
                 <div style="width: 20px;"></div> <!-- Spacer -->
+
                 <button type="button" class="stamp-btn" onclick="togglePreview()" title="Preview Diary">
                     <span class="stamp-text">Preview</span>
                 </button>
@@ -488,7 +576,8 @@
                 style="display:none; width:100%; margin-top:20px; border:4px solid #fff; border-radius:5px; box-shadow:0 10px 20px rgba(0,0,0,0.3); background:#333; position:relative;">
                 <button type="button" onclick="togglePreview()"
                     style="position:absolute; top:-15px; right:-15px; background:red; color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.3);">X</button>
-                <div style="color:white; padding:5px; text-align:center; font-size:0.9rem;">Preview Mode (Refresh to see
+                <div style="color:white; padding:5px; text-align:center; font-size:0.9rem;">Preview Mode (Refresh to
+                    see
                     saved changes)</div>
                 <iframe id="preview-frame" style="width:100%; height:600px; border:none; background:white;"></iframe>
             </div>
@@ -497,9 +586,20 @@
     </div>
 
     <!-- Data -->
-    <div id="existing-data" style="display:none;">
-        <%= JSON.stringify(diary.pages) %>
-    </div>
+    <!-- Server Data Payload -->
+    <script id="server-data" type="application/json">
+        <%- JSON.stringify({
+            pages: diary.pages || [],
+            diary: {
+                title: diary.title,
+                description: diary.description,
+                finalQuestion: diary.finalQuestion,
+                yesLabel: diary.yesLabel,
+                noLabel: diary.noLabel,
+                successMessage: diary.successMessage
+            }
+        }) %>
+    </script>
 
 
 
@@ -507,28 +607,25 @@
         console.log("Dashboard Script Initializing...");
 
         // --- Data & State ---
-        let pagesData = [];
+
+        // Initialize Data safely from JSON script output
+        let serverData;
         try {
-            const rawData = document.getElementById('existing-data').textContent;
-            pagesData = JSON.parse(rawData);
+            serverData = JSON.parse(document.getElementById('server-data').textContent);
         } catch (e) {
-            console.error("JSON Parse Error", e);
-            pagesData = [];
+            console.error("Data Parse Error", e);
+            serverData = { pages: [], diary: {} };
         }
 
-        // Cover Data State (Initialized from EJS)
+        let pagesData = serverData.pages || [];
+        const diary = serverData.diary || {};
+
+        // Cover Data State
         let coverData = {
-            title: `<%- diary.title %>`,
-            description: `<%- diary.description %>`
+            title: diary.title || '',
+            description: diary.description || ''
         };
 
-        // Final Page Data State
-        let finalPageData = {
-            finalQuestion: `<%- diary.finalQuestion || 'Will you be my Valentine?' %>`,
-            yesLabel: `<%- diary.yesLabel || 'Yes! ❤️' %>`,
-            noLabel: `<%- diary.noLabel || 'No' %>`,
-            successMessage: `<%- diary.successMessage || 'Yay! ❤️ I love you!' %>`
-        };
 
         if (pagesData.length < 1) {
             pagesData.push({ text: '', imageUrl: '' });
@@ -547,6 +644,18 @@
         updateUI();
 
         // --- Core Functions ---
+
+        function goToFirst() {
+            currentIndex = -1;
+            renderStack();
+            updateUI();
+        }
+
+        function goToLast() {
+            currentIndex = pagesData.length;
+            renderStack();
+            updateUI();
+        }
 
         function renderStack() {
             container.innerHTML = '';
@@ -601,7 +710,7 @@
                         
                         <!-- Upload Button (Floating) -->
                         <label for="file-${index}" title="Upload Image" style="position:absolute; top:10px; right:10px; font-size:1.5rem; cursor:pointer; z-index:15; transition:transform 0.2s; background:rgba(255,255,255,0.7); border-radius:50%; padding:5px;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-                            🖼️
+                            &#128444;&#65039;
                         </label>
                         <input type="file" id="file-${index}" accept="image/*" style="display:none;" onchange="handleFileUpload(this, ${index})">
                         <span id="upload-status-${index}" style="position:absolute; top:45px; right:15px; font-size:0.7rem; color:#27ae60; font-weight:bold;"></span>
@@ -615,7 +724,7 @@
                     </div>`;
 
                 const textSection = `
-                    <label style="margin-top:0;">📝 Story: <small style="color:#666; float:right;">(<span id="char-count-${index}">${(page.text || '').length}</span>/500)</small></label>
+                    <label style="margin-top:0;">&#128221; Story: <small style="color:#666; float:right;">(<span id="char-count-${index}">${(page.text || '').length}</span>/500)</small></label>
                     <textarea name="pages[${index}][text]" maxlength="500" placeholder="Once upon a time..." 
                         style="width: 100%; height: 200px; padding: 5px 0; border: none; background: transparent; resize: vertical; line-height: 25px;"
                         oninput="updateData(${index}, 'text', this.value); updateCharCount(this, ${index})">${page.text || ''}</textarea>
@@ -627,62 +736,63 @@
                     <div class="page-number">${index + 1}</div>
                     
                     <div style="text-align:right; margin-bottom:5px;">
-                        <button type="button" onclick="toggleLayout(${index})" style="font-size:0.8rem; padding:2px 5px; background:#bdc3c7; border:none; border-radius:3px; cursor:pointer;" title="Swap Text/Image Position">
-                            ${isImageFirst ? '⬇️ Move Image Down' : '⬆️ Move Image Up'}
+                        <button type="button" onclick="toggleLayout(${index})" style="font-size:1.2rem; padding:2px 5px; background:none; border:none; cursor:pointer;" title="Swap Text/Image Position">
+                            ${isImageFirst ? '&#11015;&#65039;' : '&#11014;&#65039;'}
                         </button>
                     </div>
 
                     ${isImageFirst ? imageSection + textSection : textSection + imageSection}
                     
-                    <button type="button" class="btn-delete" onclick="deletePage(${index})">🗑️</button>
+                    <button type="button" class="btn-delete" onclick="deletePage(${index})" title="Delete Page" style="font-size:1.2rem; background:none; border:none;">&#128465;&#65039;</button>
                 `;
                 container.appendChild(div);
             });
 
-            // --- 3. RENDER FINAL PAGE (Index pagesData.length) ---
+            // --- 3. RENDER FINAL PAGE (Index = pagesData.length) ---
             const finalDiv = document.createElement('div');
             finalDiv.className = 'page-item';
 
-            // Back Cover Style
-            finalDiv.style.background = "#6a1b21";
-            finalDiv.style.backgroundImage = "radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px)";
-            finalDiv.style.backgroundSize = "4px 4px, 5px 5px";
-            finalDiv.style.border = "none";
-            finalDiv.style.boxShadow = "inset 0 0 20px rgba(0,0,0,0.6)";
+            // Special styling for Final Page
+            finalDiv.style.background = "#fff0f5"; // Lavender blush
+            finalDiv.style.border = "2px solid #e91e63"; // Pink border
             finalDiv.style.display = "flex";
             finalDiv.style.flexDirection = "column";
-            finalDiv.style.justifyContent = "center";
             finalDiv.style.alignItems = "center";
-            finalDiv.style.zIndex = 50;
+            finalDiv.style.justifyContent = "center";
+            finalDiv.style.textAlign = "center";
 
             if (currentIndex === pagesData.length) finalDiv.classList.add('active');
-            else if (currentIndex > pagesData.length) finalDiv.classList.add('prev');
+            else if (currentIndex > pagesData.length) finalDiv.classList.add('prev'); // Should not happen
 
             finalDiv.innerHTML = `
-                <div class="page-number" style="background:#444; color:#fff; border-color:#666;">End</div>
+                <div class="page-number" style="background:#e91e63;">End</div>
                 
-                <h3 style="color:#e6c278; font-family:'Dancing Script'; font-size:2rem; margin-bottom:15px; text-shadow:1px 1px 2px black;">The Big Question</h3>
+                <h3 style="color:#c2185b; margin-bottom:15px; font-family:'Indie Flower';">&#10084;&#65039; The Big Question &#10084;&#65039;</h3>
+                
+                <label style="color:#880e4f; font-weight:bold;">Your Question:</label>
+                <input type="text" name="finalQuestion" value="${diary.finalQuestion || 'Will you be my Valentine?'}" 
+                    oninput="diary.finalQuestion=this.value" placeholder="Will you be my Valentine?"
+                    style="width:90%; padding:8px; margin-bottom:15px; border:1px solid #f48fb1; border-radius:5px; text-align:center; font-size:1.1rem; color:#880e4f;">
 
-                <label style="color:#e6c278; font-size:0.8rem;">Question Text</label>
-                <input type="text" name="finalQuestion" value="${finalPageData.finalQuestion}" oninput="finalPageData.finalQuestion=this.value" 
-                    class="line-input" style="width:80%; font-size:1.2rem; margin-bottom:15px;">
-
-                <div style="display:flex; gap:10px; width:80%; justify-content:center;">
+                <div style="display:flex; gap:10px; width:90%; margin-bottom:15px;">
                     <div style="flex:1;">
-                        <label style="color:#27ae60; font-size:0.8rem;">'Yes' Button</label>
-                        <input type="text" name="yesLabel" value="${finalPageData.yesLabel}" oninput="finalPageData.yesLabel=this.value"
-                            class="line-input" style="width:100%; color:#27ae60; border-bottom: 2px dashed #27ae60;">
+                        <label style="color:#2ecc71; font-weight:bold;">Yes Button:</label>
+                        <input type="text" name="yesLabel" value="${diary.yesLabel || 'Yes! &#10084;&#65039;'}" 
+                            oninput="diary.yesLabel=this.value" placeholder="Yes! &#10084;&#65039;"
+                            style="width:100%; padding:5px; border:1px solid #a5d6a7; border-radius:5px; text-align:center;">
                     </div>
                     <div style="flex:1;">
-                        <label style="color:#c0392b; font-size:0.8rem;">'No' Button</label>
-                        <input type="text" name="noLabel" value="${finalPageData.noLabel}" oninput="finalPageData.noLabel=this.value"
-                            class="line-input" style="width:100%; color:#c0392b; border-bottom: 2px dashed #c0392b;">
+                        <label style="color:#e74c3c; font-weight:bold;">No Button:</label>
+                        <input type="text" name="noLabel" value="${diary.noLabel || 'No'}" 
+                            oninput="diary.noLabel=this.value" placeholder="No"
+                            style="width:100%; padding:5px; border:1px solid #ef9a9a; border-radius:5px; text-align:center;">
                     </div>
                 </div>
 
-                <label style="color:#e6c278; font-size:0.8rem; margin-top:15px;">Success Message</label>
-                <input type="text" name="successMessage" value="${finalPageData.successMessage}" oninput="finalPageData.successMessage=this.value"
-                    class="line-input" style="width:80%; font-size:1.2rem;">
+                <label style="color:#ad1457; font-weight:bold;">Success Message (After Yes):</label>
+                <textarea name="successMessage" placeholder="Yay! I love you! &#10084;&#65039;" 
+                    oninput="diary.successMessage=this.value"
+                    style="width:90%; height:60px; padding:5px; border:1px solid #f48fb1; border-radius:5px; text-align:center; resize:none;">${diary.successMessage || 'Yay! &#10084;&#65039; I love you!'}</textarea>
             `;
             container.appendChild(finalDiv);
         }
@@ -764,7 +874,7 @@
                 });
 
                 if (response.ok) {
-                    statusDiv.innerHTML = "Saved Successfully! 💖";
+                    statusDiv.innerHTML = "Saved Successfully! &#128150;";
                     setTimeout(() => { statusDiv.style.opacity = 0; }, 3000);
                     refreshPreview();
                 } else {
@@ -779,6 +889,7 @@
 
         function changePage(direction) {
             const newIndex = currentIndex + direction;
+            // Allow range from -1 (Cover) to pagesData.length (Final Page)
             if (newIndex >= -1 && newIndex <= pagesData.length) {
                 currentIndex = newIndex;
                 renderStack();
@@ -806,49 +917,17 @@
 
         function updateUI() {
             if (currentIndex === -1) displayCount.textContent = `Cover`;
-            else if (currentIndex === pagesData.length) displayCount.textContent = `Final Page`;
+            else if (currentIndex === pagesData.length) displayCount.textContent = `Final`;
             else displayCount.textContent = `${currentIndex + 1} / ${pagesData.length}`;
 
             btnPrev.disabled = currentIndex === -1;
-            btnNext.disabled = currentIndex === pagesData.length;
+            btnNext.disabled = currentIndex === pagesData.length; // Disable next if at Final Page
 
             // Hide Add Page button on Cover (-1) and Final Page
             const btnAdd = document.querySelector('.btn-add');
             if (btnAdd) {
                 btnAdd.style.display = (currentIndex === -1 || currentIndex === pagesData.length) ? 'none' : 'inline-block';
             }
-
-            renderPagination();
-        }
-
-        function renderPagination() {
-            const controls = document.getElementById('pagination-controls');
-            controls.innerHTML = '';
-
-            // 1. Cover Dot
-            const coverDot = document.createElement('div');
-            coverDot.className = `page-dot ${currentIndex === -1 ? 'active' : ''}`;
-            coverDot.textContent = 'C';
-            coverDot.title = "Go to Cover";
-            coverDot.onclick = () => { currentIndex = -1; renderStack(); updateUI(); };
-            controls.appendChild(coverDot);
-
-            // 2. Page Dots
-            pagesData.forEach((_, i) => {
-                const dot = document.createElement('div');
-                dot.className = `page-dot ${currentIndex === i ? 'active' : ''}`;
-                dot.textContent = i + 1;
-                dot.onclick = () => { currentIndex = i; renderStack(); updateUI(); };
-                controls.appendChild(dot);
-            });
-
-            // 3. Final Page Dot
-            const finalDot = document.createElement('div');
-            finalDot.className = `page-dot ${currentIndex === pagesData.length ? 'active' : ''}`;
-            finalDot.textContent = '❤️';
-            finalDot.title = "Go to Final Page";
-            finalDot.onclick = () => { currentIndex = pagesData.length; renderStack(); updateUI(); };
-            controls.appendChild(finalDot);
         }
 
         function togglePreview() {
@@ -910,6 +989,60 @@
                 alert("Could not initiate payment. Check server logs.");
             }
         }
+
+        // --- Sparkle/Particle Background Script ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.alpha = Math.random();
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                // Using primary color with low opacity for subtle effect
+                ctx.fillStyle = `rgba(106, 27, 33, ${this.alpha * 0.2})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
     </script>
 </body>
 

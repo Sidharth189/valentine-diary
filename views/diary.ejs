@@ -3,11 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Story</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&display=swap"
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Our Love Diary</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&family=Great+Vibes&family=Pinyon+Script&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
@@ -177,19 +179,15 @@
                 <div class="confetti"></div>
 
                 <div class="envelope-wrapper">
-                    <div class="envelope">
-                        <div class="envelope-back"></div>
-                        <div class="invitation-card">
-                            <div class="card-border">
-                                <div class="card-content">
-                                    <p class="success-text">
-                                        <%= diary.successMessage || 'Yay! ❤️ I love you!' %>
-                                    </p>
-                                </div>
+                    <!-- Envelope Removed (Card Only Design) -->
+                    <div class="invitation-card">
+                        <div class="card-border">
+                            <div class="card-content" style="width:100%;">
+                                <p class="success-text">
+                                    <%= diary.successMessage || 'Yay! ❤️ I love you!' %>
+                                </p>
                             </div>
                         </div>
-                        <div class="envelope-front"></div>
-                        <div class="envelope-top"></div>
                     </div>
                 </div>
             </div>
