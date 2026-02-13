@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const responseMsg = document.getElementById('response-msg');
     const celebration = document.getElementById('celebration');
 
-    let currentPage = 0;
+
     const totalPages = pages.length;
     let closeTimeout;
 
@@ -14,13 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // const audioFlip = new Audio('https://www.soundjay.com/books/sounds/page-flip-01a.mp3');
 
 
-    // --- History & Navigation Logic ---
+    // --- Page State & Initialization ---
 
-    // Initial State
-    history.replaceState({ page: 0, celebration: false }, '', '');
+    // 1. Read Initial State from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page')) || 0;
+    let currentPage = initialPage;
 
-    // Function to handle browser Back/Forward (Jumps)
-    function updateBookState(targetPage) {
+    // Apply initial z-index from data attribute (set in EJS)
+    document.querySelectorAll('.page[data-z-index]').forEach(el => {
+        el.style.zIndex = el.getAttribute('data-z-index');
+    });
+
+    // Check for Preview Mode
+    if (urlParams.get('preview') === 'true') {
+        document.body.classList.add('body-preview');
+    }
+
+    // Preserve initial state in history without wiping the URL
+    history.replaceState({ page: initialPage, celebration: false }, '', window.location.search);
+
+    // Function to handle browser Back/Forward (Exposed for compatibility)
+    window.updateBookState = function (targetPage) {
         // Iterate all pages to match target state instantly
         pages.forEach((page, index) => {
             if (index < targetPage) {
@@ -35,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         updateBookOpenState(targetPage);
         currentPage = targetPage;
+
+        // Auto-scale content to fit the new state
+        if (typeof fitContentToContainer === 'function') fitContentToContainer();
     }
 
     function updateBookOpenState(pageIndex) {
@@ -54,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Ensure scale fits the current state
-        if (typeof resizeBook === 'function') resizeBook();
+        resizeBook();
     }
 
     // Handle Browser Back/Forward
@@ -174,7 +192,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize Book State on Load
-    updateBookState(currentPage);
+    window.updateBookState(currentPage);
+
+    // --- Content Fitting Logic ---
+    function fitContentToContainer() {
+        document.querySelectorAll('.content').forEach(content => {
+            const p = content.querySelector('p');
+            const imgContainer = content.querySelector('.photo-placeholder');
+            if (!p) return;
+
+            // Reset styles
+            let fontSize = 1.2;
+            p.style.fontSize = fontSize + 'rem';
+            if (imgContainer) imgContainer.style.maxHeight = '45%';
+
+            const isOverflowing = () => content.scrollHeight > content.clientHeight;
+
+            // Strategy 1: Shrink Image
+            if (imgContainer && isOverflowing()) {
+                let mh = 45;
+                while (isOverflowing() && mh > 20) {
+                    mh -= 2;
+                    imgContainer.style.maxHeight = mh + '%';
+                }
+            }
+
+            // Strategy 2: Shrink Font
+            while (isOverflowing() && fontSize > 0.6) {
+                fontSize -= 0.05;
+                p.style.fontSize = fontSize + 'rem';
+            }
+        });
+    }
 
     // --- Floating Background Elements ---
     // createFloatingBackground(); // Disabled for User Image Background
@@ -209,35 +258,122 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fluid Responsiveness (Strict Fit) ---
     function resizeBook() {
         const scene = document.querySelector('.scene');
+        if (!scene) return;
         const book = document.getElementById('book');
+        const envelopeWrapper = document.querySelector('.envelope-wrapper');
+        const previewBanner = document.getElementById('preview-banner');
+        const isPreviewMode = document.body.classList.contains('body-preview');
 
-        // Exact Dimensions of the Book Elements
-        const baseWidth = 420;
-        const baseHeight = 560;
-        const padding = 120; // Increased padding to force a smaller "centered" size
-
-        let contentWidth = baseWidth; // Closed state
-
-        // Open state is exactly double width (Left Page + Right Page)
-        if (book.classList.contains('open')) {
-            contentWidth = baseWidth * 2; // 840px
+        // --- 1. Available Viewport ---
+        let availableHeight = window.innerHeight;
+        let availableWidth = window.innerWidth;
+        if (previewBanner) {
+            availableHeight -= previewBanner.offsetHeight;
         }
 
-        // Calculate Fit Ratios
-        const widthRatio = window.innerWidth / (contentWidth + padding);
-        const heightRatio = window.innerHeight / (baseHeight + padding);
+        // --- 2. Scale Logic ---
+        const baseWidth = 420;
+        const baseHeight = 560;
+        const isMobile = availableWidth < 600;
+        const isOpen = book.classList.contains('open');
 
-        // Always fit the smallest ratio (Contain)
+        // When open, always target TWO pages (840px) for full spread
+        let targetWidth = baseWidth;
+        if (isOpen) {
+            targetWidth = baseWidth * 2;
+        }
+
+        // Dynamic padding: smaller viewport = less padding
+        let paddingW, paddingH;
+        if (isPreviewMode) {
+            paddingW = isMobile ? 10 : 20;
+            paddingH = isMobile ? 20 : 30;
+        } else {
+            paddingW = Math.max(10, Math.min(availableWidth * 0.05, 60));
+            paddingH = Math.max(20, Math.min(availableHeight * 0.06, 80));
+        }
+
+        // On mobile when open, scale to fit the viewport width
+        // Allow scaling down significantly to ensure "all corners inside"
+        let widthRatio, heightRatio;
+        if (isMobile && isOpen) {
+            widthRatio = Math.max(availableWidth / (targetWidth + paddingW), 0.2);
+            heightRatio = availableHeight / (baseHeight + paddingH);
+        } else {
+            widthRatio = availableWidth / (targetWidth + paddingW);
+            heightRatio = availableHeight / (baseHeight + paddingH);
+        }
+
         let scale = Math.min(widthRatio, heightRatio);
-
-        // Safety multiplier to ensure it's "small" and fits within margins
-        scale = scale * 0.95;
-
-        // Cap max size for desktop
         if (scale > 1.2) scale = 1.2;
+        if (scale < 0.2) scale = 0.2; // Absolute minimum
 
-        scene.style.transformOrigin = 'center center';
         scene.style.transform = `scale(${scale})`;
+
+        // --- KEY FIX: Compensate margins so layout box matches visual size ---
+        // Without this, the scene's 420x560 layout box causes flexbox misalignment
+        const excessW = baseWidth * (1 - scale) / 2;
+        const excessH = baseHeight * (1 - scale) / 2;
+
+        // If mobile open, shift right to reveal left page and expand for right page
+        // (Open book is 840px wide vs 420px closed - extends 210px left/right beyond scene)
+        let marginLeft = -excessW;
+        let marginRight = -excessW;
+
+        if (isMobile && isOpen) {
+            const spreadOffset = 210 * scale;
+
+            // Smart Centering: Calculate available whitespace and distribute
+            const visualWidth = targetWidth * scale; // 840 * scale
+            // If it fits, center it. If not, align to start (centeringOffset = 0)
+            const centeringOffset = Math.max(0, (availableWidth - visualWidth) / 2);
+
+            marginLeft += spreadOffset + centeringOffset;
+            marginRight += spreadOffset;
+        }
+
+        scene.style.marginLeft = `${marginLeft}px`;
+        scene.style.marginRight = `${marginRight}px`;
+        scene.style.marginTop = `${-excessH}px`;
+        scene.style.marginBottom = `${-excessH}px`;
+
+        // Re-run content fitting
+        setTimeout(() => {
+            if (typeof fitContentToContainer === 'function') fitContentToContainer();
+        }, 50);
+
+        // --- 3. Book Transform (Open/Closed) ---
+        if (isOpen) {
+            // Always center the spine (show both pages)
+            book.style.transform = `translateX(210px) rotateZ(0deg)`;
+        } else {
+            book.style.transform = '';
+        }
+
+        // --- 4. Mobile Scroll Handling ---
+        if (isMobile && isOpen) {
+            document.body.classList.add('book-open-mobile');
+            document.documentElement.classList.add('book-open-mobile');
+
+            // Auto-scroll to center the book after a brief delay
+            setTimeout(() => {
+                const sceneRect = scene.getBoundingClientRect();
+                const scrollTarget = sceneRect.left + window.scrollX + (sceneRect.width / 2) - (availableWidth / 2);
+                window.scrollTo({ left: Math.max(0, scrollTarget), behavior: 'smooth' });
+            }, 100);
+        } else {
+            document.body.classList.remove('book-open-mobile');
+            document.documentElement.classList.remove('book-open-mobile');
+            window.scrollTo({ left: 0 });
+        }
+
+        // --- 5. Scale the Celebration Overlay ---
+        if (envelopeWrapper) {
+            const cardBaseWidth = 800;
+            const safetyPadding = isMobile ? 40 : 80;
+            const cardScale = Math.min(availableWidth / (cardBaseWidth + safetyPadding), availableHeight / 400, 1);
+            envelopeWrapper.style.transform = `scale(${cardScale})`;
+        }
     }
 
     window.addEventListener('resize', resizeBook);

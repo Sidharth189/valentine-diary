@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Our Love Diary</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&family=Great+Vibes&family=Pinyon+Script&display=swap"
@@ -15,7 +14,7 @@
 <body>
 
     <% if (typeof isPreview !=='undefined' && isPreview) { %>
-        <div
+        <div id="preview-banner"
             style="position:fixed; top:0; left:0; width:100%; background:#f39c12; color:white; text-align:center; padding:10px; z-index:9999; font-family:sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
             👁️ <strong>Preview Mode</strong>: Only you can see this. <a href="/dashboard"
                 style="color:white; text-decoration:underline;">Pay ₹9 to Unlock & Share</a>
@@ -193,59 +192,6 @@
             </div>
 
             <script src="/js/script.js"></script>
-            <script>
-                // Apply z-index from data attribute to make linter happy
-                document.querySelectorAll('.page[data-z-index]').forEach(el => {
-                    el.style.zIndex = el.getAttribute('data-z-index');
-                });
-
-                // Add body class for preview mode
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('preview') === 'true') {
-                    document.body.classList.add('body-preview');
-                }
-
-                // Auto-scale text to fit container
-                function fitContentToContainer() {
-                    document.querySelectorAll('.content').forEach(content => {
-                        const p = content.querySelector('p');
-                        const imgContainer = content.querySelector('.photo-placeholder');
-                        const img = imgContainer ? imgContainer.querySelector('img') : null;
-
-                        // Reset styles to default to measure true overflow
-                        let fontSize = 1.2;
-                        p.style.fontSize = fontSize + 'rem';
-
-                        let imgScale = 100; // Percentage max-height
-                        if (imgContainer) {
-                            imgContainer.style.maxHeight = '50%'; // Reset to substantial height
-                            imgContainer.style.width = '80%';
-                        }
-
-                        // Helper to check overflow
-                        const isOverflowing = () => content.scrollHeight > content.clientHeight;
-
-                        // Strategy 1: Reduce Image Size first (if image exists)
-                        if (imgContainer && isOverflowing()) {
-                            // Shrink image down to 20% max-height
-                            let currentMaxHeight = 50;
-                            while (isOverflowing() && currentMaxHeight > 20) {
-                                currentMaxHeight -= 2;
-                                imgContainer.style.maxHeight = currentMaxHeight + '%';
-                            }
-                        }
-
-                        // Strategy 2: Reduce Font Size (if still overflowing)
-                        while (isOverflowing() && fontSize > 0.7) {
-                            fontSize -= 0.05;
-                            p.style.fontSize = fontSize + 'rem';
-                        }
-                    });
-                }
-
-                window.addEventListener('load', fitContentToContainer);
-                window.addEventListener('resize', fitContentToContainer);
-            </script>
 </body>
 
 </html>

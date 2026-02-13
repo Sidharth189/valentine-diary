@@ -498,6 +498,87 @@
                 flex-direction: column;
                 gap: 5px;
             }
+
+            #preview-container {
+                margin-left: 0;
+                margin-right: 0;
+                border-radius: 8px;
+                border-width: 2px;
+            }
+
+            .dashboard-layout.preview-active {
+                padding: 10px 5px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 400px) {
+            #preview-container {
+                border-width: 2px;
+                border-radius: 6px;
+                margin: 10px 0;
+            }
+        }
+
+        .dashboard-layout {
+            max-width: 600px;
+            width: 95%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Core centering */
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Preview Container Styling */
+        #preview-container {
+            display: none;
+            width: 100%;
+            max-width: 100%;
+            margin: 20px 0;
+            border: 4px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            background: #111;
+            position: relative;
+            overflow: hidden;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        #preview-container iframe {
+            /* Fixed internal resolution - diary sees a full desktop viewport */
+            width: 900px;
+            height: 700px;
+            border: none;
+            background: white;
+            display: block;
+            transform-origin: top left;
+            /* Scale is set dynamically by JS */
+        }
+
+        /* Wrapper clips the iframe at its scaled visual size */
+        .iframe-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dashboard-layout.preview-active {
+            max-width: 100%;
+            width: 100%;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Center non-preview elements when expanded */
+        .dashboard-layout.preview-active>*:not(#preview-container) {
+            max-width: 500px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -571,15 +652,17 @@
                 </button>
             </div>
 
-            <!-- Inline Preview Container -->
-            <div id="preview-container"
-                style="display:none; width:100%; margin-top:20px; border:4px solid #fff; border-radius:5px; box-shadow:0 10px 20px rgba(0,0,0,0.3); background:#333; position:relative;">
+            <!-- 5. Live Preview Section -->
+            <div id="preview-container" style="display:none;">
                 <button type="button" onclick="togglePreview()"
-                    style="position:absolute; top:-15px; right:-15px; background:red; color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.3);">X</button>
-                <div style="color:white; padding:5px; text-align:center; font-size:0.9rem;">Preview Mode (Refresh to
-                    see
-                    saved changes)</div>
-                <iframe id="preview-frame" style="width:100%; height:600px; border:none; background:white;"></iframe>
+                    style="position:absolute; top:10px; right:10px; background:#e74c3c; color:white; border:2px solid #fff; border-radius:50%; width:35px; height:35px; cursor:pointer; font-weight:bold; font-size:1.2rem; z-index:10; display:flex; align-items:center; justify-content:center;">&times;</button>
+                <div
+                    style="color:white; padding:10px; text-align:center; font-size:1.1rem; font-weight:bold; background:rgba(0,0,0,0.5);">
+                    ✨ Live Diary Preview
+                </div>
+                <div class="iframe-wrapper" id="iframe-wrapper">
+                    <iframe id="preview-frame"></iframe>
+                </div>
             </div>
 
         </form>
@@ -930,27 +1013,58 @@
             }
         }
 
+        function resizePreviewFrame() {
+            const frame = document.getElementById('preview-frame');
+            const wrapper = document.getElementById('iframe-wrapper');
+            const container = document.getElementById('preview-container');
+            if (!frame || !wrapper || container.style.display === 'none') return;
+
+            // Fixed internal iframe size (desktop-like viewport)
+            const iframeW = 900;
+            const iframeH = 700;
+
+            // Scale to fit container width
+            const containerWidth = container.clientWidth;
+            const scale = containerWidth / iframeW;
+
+            // Apply CSS transform scale to the iframe
+            frame.style.width = iframeW + 'px';
+            frame.style.height = iframeH + 'px';
+            frame.style.transform = `scale(${scale})`;
+            frame.style.transformOrigin = 'top left';
+
+            // Set wrapper height to the resulting visual height
+            wrapper.style.height = (iframeH * scale) + 'px';
+        }
+
+        // Listen for resize to keep preview responsive
+        window.addEventListener('resize', resizePreviewFrame);
+
         function togglePreview() {
             const container = document.getElementById('preview-container');
             const frame = document.getElementById('preview-frame');
             const btn = document.querySelector('.stamp-btn');
             const btnText = btn.querySelector('.stamp-text');
+            const layout = document.querySelector('.dashboard-layout');
 
             if (container.style.display === 'none') {
                 container.style.display = 'block';
+                layout.classList.add('preview-active');
                 frame.src = "/u/<%= diary.slug %>?preview=true&t=" + new Date().getTime();
                 if (btnText) btnText.innerHTML = "Close Preview";
-                btn.style.background = "#ffdce0"; // Subtle red tint for "close"
+                btn.style.background = "#ffdce0";
 
-                // Scroll to preview area
+                // Resize iframe to fit, then scroll into view
                 setTimeout(() => {
+                    resizePreviewFrame();
                     container.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
             } else {
                 container.style.display = 'none';
+                layout.classList.remove('preview-active');
                 frame.src = "";
                 if (btnText) btnText.innerHTML = "Preview";
-                btn.style.background = "#fdfbf7"; // Original color
+                btn.style.background = "#fdfbf7";
             }
         }
 
@@ -1020,8 +1134,8 @@
                 if (this.y < 0) this.y = canvas.height;
             }
             draw() {
-                // Using primary color with low opacity for subtle effect
-                ctx.fillStyle = `rgba(106, 27, 33, ${this.alpha * 0.2})`;
+                // Using primary color with higher opacity
+                ctx.fillStyle = `rgba(106, 27, 33, ${this.alpha * 0.5})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
